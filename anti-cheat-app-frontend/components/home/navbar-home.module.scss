@@ -1,4 +1,12 @@
 .navLogo {
   margin-right: 1rem;
   cursor: pointer;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1a202c;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #2563eb;
+  }
 }

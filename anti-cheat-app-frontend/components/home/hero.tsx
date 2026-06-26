@@ -1,7 +1,6 @@
 import React from "react";
 import classes from "./home.module.scss";
 import { Button, Container, Stack } from "@mui/material";
-// Removed hero image and Mobile App button
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import LoginIcon from "@mui/icons-material/Login";
 import { useSession } from "next-auth/react";
@@ -23,18 +22,18 @@ const Hero: React.FC<HeroProps> = ({ loadingBarRef }) => {
   return (
     <React.Fragment>
       <section className={classes.heroSection}>
-        <Container>
+        <Container maxWidth="md">
           <Stack
-            direction="row"
-            justifyContent="space-around"
-            alignItems="start"
+            direction="column"
+            alignItems="center"
+            spacing={0}
           >
             <div className={classes.heroText}>
-              <h1>Online exams made fairer</h1>
+              <h1>Online Exams Made Fairer</h1>
 
               <p>
-                Detect cheating in online exams with the power of Artificial
-                Intelligence & Machine Learning
+                Detect cheating with AI-powered face detection and real-time monitoring.
+                Ensure exam integrity while maintaining student privacy.
               </p>
 
               <Stack direction="row" className={classes.buttonGroup}>
@@ -66,8 +65,6 @@ const Hero: React.FC<HeroProps> = ({ loadingBarRef }) => {
                 )}
               </Stack>
             </div>
-
-            {/* Hero image removed per request */}
           </Stack>
         </Container>
       </section>

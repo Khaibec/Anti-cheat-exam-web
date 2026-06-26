@@ -1,3 +1,91 @@
-.examDateSpan {
-  margin-right: 0.75rem;
+.examCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    border-color: #2563eb;
+  }
+
+  .examHeader {
+    margin-bottom: 1rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin: 0 0 0.5rem 0;
+    }
+  }
+
+  .examDateSpan {
+    margin-right: 0.75rem;
+    display: inline-block;
+    background: #f5f7fa;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .examDetails {
+    flex-grow: 1;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0.5rem 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+  }
+
+  .examFooter {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+
+      &.startButton {
+        background: #2563eb;
+        color: white;
+
+        &:hover {
+          background: #1d4ed8;
+        }
+      }
+
+      &.secondaryButton {
+        background: #f5f7fa;
+        color: #1a202c;
+        border: 1px solid #e2e8f0;
+
+        &:hover {
+          background: #edf2f7;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .examCard {
+    padding: 1rem;
+  }
 }

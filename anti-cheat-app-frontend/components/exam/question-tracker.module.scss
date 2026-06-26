@@ -1,15 +1,100 @@
 .quesTracker {
-  background-color: #eee;
-  border-radius: 1rem;
-  padding: 5% 0 10% 0;
-  margin: 1rem 1rem 0 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f9fafb 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1rem;
+  border: 1px solid #e2e8f0;
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+  }
 }
 
 .questionCircles {
-  margin: 3rem 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+
+  .circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #e2e8f0;
+    background: white;
+
+    &.attempted {
+      background: #dbeafe;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    &.notAttempted {
+      background: white;
+      border-color: #cbd5e0;
+      color: #a0aec0;
+    }
+
+    &.current {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      transform: scale(1.1);
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
 }
 
 .questionCirclesLabel {
-  margin: 3rem 0 1rem;
-  padding-left: 20%;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+
+    .legendDot {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 2px solid #e2e8f0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .quesTracker {
+    margin: 1rem 0;
+    padding: 1.5rem 1rem;
+  }
+
+  .questionCircles {
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 0.5rem;
+
+    .circle {
+      width: 36px;
+      height: 36px;
+      font-size: 0.8rem;
+    }
+  }
 }

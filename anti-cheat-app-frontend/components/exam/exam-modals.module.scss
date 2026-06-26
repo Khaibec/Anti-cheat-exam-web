@@ -1,0 +1,124 @@
+.modal {
+  .paperClass {
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.modalHeader {
+  padding: 2rem;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+}
+
+.modalContent {
+  padding: 2rem;
+  max-height: 60vh;
+  overflow-y: auto;
+
+  p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.modalFooter {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Inter", sans-serif;
+
+    &.primaryButton {
+      background: #2563eb;
+      color: white;
+
+      &:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+      }
+    }
+
+    &.secondaryButton {
+      background: #f5f7fa;
+      color: #1a202c;
+      border: 1px solid #e2e8f0;
+
+      &:hover {
+        background: #edf2f7;
+      }
+    }
+  }
+}
+
+.warningIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+
+  svg {
+    color: #f59e0b;
+    font-size: 3rem;
+  }
+}
+
+.errorIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+
+  svg {
+    color: #ef4444;
+    font-size: 3rem;
+  }
+}
+
+.successIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+
+  svg {
+    color: #10b981;
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .modalContent {
+    padding: 1.5rem;
+    max-height: 70vh;
+  }
+
+  .modalFooter {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

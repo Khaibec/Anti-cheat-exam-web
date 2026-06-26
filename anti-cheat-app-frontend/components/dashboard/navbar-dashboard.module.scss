@@ -1,4 +1,38 @@
 .navLogo {
   margin-right: 1rem;
   cursor: pointer;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1a202c;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #2563eb;
+  }
+}
+
+.navBar {
+  background: white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.userMenu {
+  button {
+    text-transform: none;
+    font-weight: 500;
+    color: #1a202c;
+  }
+
+  a {
+    padding: 0.75rem 1rem;
+    color: #1a202c;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #f5f7fa;
+      color: #2563eb;
+    }
+  }
 }

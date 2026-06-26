@@ -1,10 +1,97 @@
 .formContainer {
-  margin: 10rem 0 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f9fafb 100%);
+  padding: 2rem 0;
 }
 
 .form {
-  max-width: 400px;
-  margin: auto auto;
+  max-width: 450px;
+  width: 100%;
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+
+  .inputField {
+    margin-bottom: 1.5rem;
+
+    label {
+      font-weight: 600;
+      color: #1a202c;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: "Inter", sans-serif;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      &::placeholder {
+        color: #cbd5e0;
+      }
+    }
+
+    .error {
+      color: #e53e3e;
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+    }
+  }
+
+  button {
+    width: 100%;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
 }
 
 .footerContainer {
@@ -12,4 +99,24 @@
   bottom: 0;
   left: 0;
   right: 0;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  padding: 1rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .formContainer {
+    padding: 1rem;
+  }
+
+  .form {
+    padding: 2rem 1.5rem;
+
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
 }
