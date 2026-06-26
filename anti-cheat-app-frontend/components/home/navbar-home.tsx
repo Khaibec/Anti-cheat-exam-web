@@ -24,6 +24,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+import { getDashboardPath } from "../../helpers/auth/roles";
 
 interface NavBarHomeProps {
   window?: () => Window;
@@ -147,15 +148,17 @@ const NavBarHome: React.FC<NavBarHomeProps> = (props) => {
                 <MenuIcon />
               </IconButton>
 
-              <Link href="/">
-                <Image
-                  src="/images/logo.png"
-                  height="48px"
-                  width="48px"
-                  alt="Logo"
-                  className={classes.navLogo}
-                />
-              </Link>
+              {router.pathname !== "/" && (
+                <Link href="/">
+                  <Image
+                    src="/images/logo.png"
+                    height="48px"
+                    width="48px"
+                    alt="Logo"
+                    className={classes.navLogo}
+                  />
+                </Link>
+              )}
 
               <Typography
                 variant="h6"

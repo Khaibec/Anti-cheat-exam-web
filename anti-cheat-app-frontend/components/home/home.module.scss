@@ -1,8 +1,7 @@
 /* HERO */
 
 .heroSection {
-  background: url(/images/hero_bg.png) no-repeat;
-  background-size: 100% 80%;
+  background: none;
   min-height: 100%;
   padding-top: 6rem;
   padding-top: 10%;
@@ -44,7 +43,7 @@
 }
 
 .featureSection {
-  background: url(/images/features.svg) no-repeat;
+  background: none;
   padding: 5% 0 10%;
 
   h1 {
@@ -66,7 +65,7 @@
 }
 
 .contactSection {
-  background: url(/images/features.svg) no-repeat;
+  background: none;
   padding: 5% 0 10%;
 
   h1 {

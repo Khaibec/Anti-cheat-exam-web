@@ -1,15 +1,18 @@
 const mongoose = require("mongoose");
 
-const { ObjectId } = mongoose;
-
 const adminSchema = new mongoose.Schema({
-  name: {
+  _id: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  fname: {
     type: String,
     required: true,
     maxlength: 32,
     trim: true,
   },
-  lastName: {
+  lname: {
     type: String,
     maxlength: 32,
     trim: true,
@@ -18,8 +21,18 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  managedStudents: {
+    type: [String],
+    default: [],
+  },
 });
 
-const Admin = mongoose.model("Admin", studentSchema);
+adminSchema.methods = {
+  authenticate: function (plainPassword) {
+    return plainPassword === this.password;
+  },
+};
+
+const Admin = mongoose.model("Admin", adminSchema);
 
 module.exports = Admin;

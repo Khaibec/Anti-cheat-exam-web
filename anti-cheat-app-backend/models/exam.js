@@ -41,6 +41,15 @@ const examSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
+  shuffleQuestions: {
+    type: Boolean,
+    default: true,
+  },
+  maxAttempts: {
+    type: Number,
+    min: 1,
+    default: 1,
+  },
 });
 
 const Exam = mongoose.model("Exam", examSchema);

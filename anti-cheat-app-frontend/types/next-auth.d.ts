@@ -1,5 +1,6 @@
 import NextAuth, { DefaultSession, User as DefaultUser } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { UserRole } from "../models/user-models";
 
 declare global {}
 
@@ -8,6 +9,7 @@ declare module "next-auth" {
     id: string;
     fname: string;
     lname: string;
+    role: UserRole;
     token: string;
   }
 
@@ -28,6 +30,7 @@ declare module "next-auth/jwt" {
       id: string;
       fname: string;
       lname: string;
+      role: UserRole;
       token: string;
     };
   }

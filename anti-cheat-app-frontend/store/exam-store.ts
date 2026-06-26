@@ -9,6 +9,7 @@ export interface ExamStore {
     tabChangeCount: number;
     didLeaveExam?: boolean;
     answerKeys: any[];
+    questionOrder: number[];
     countdown?: any;
     expiresOn: number;
   };
@@ -32,8 +33,11 @@ const examSlice = createSlice({
         tabChangeCount: 0,
         didLeaveExam: false,
         answerKeys: Array(action.payload.questionCount).fill(null),
+        questionOrder:
+          action.payload.questionOrder ||
+          Array.from({ length: action.payload.questionCount }, (_, i) => i),
         countdown: "",
-        expiresOn: new Date().getSeconds() + action.payload.duration,
+        expiresOn: Date.now() + action.payload.duration * 60 * 1000,
       };
 
       state.activeExam = activeExam;

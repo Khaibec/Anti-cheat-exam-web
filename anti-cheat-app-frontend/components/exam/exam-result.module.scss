@@ -1,0 +1,21 @@
+.container {
+  margin-top: 3%;
+  padding-bottom: 10%;
+}
+
+.scoreCard {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0.75rem;
+  background: rgba(25, 118, 210, 0.04);
+}
+
+.scoreValue {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.reviewItem {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}

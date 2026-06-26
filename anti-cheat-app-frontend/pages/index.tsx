@@ -1,9 +1,7 @@
 import { GetStaticProps } from "next";
 import { useRef } from "react";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
-import Contact from "../components/home/contact";
-import Features from "../components/home/features";
-import Footer from "../components/home/footer";
+// Removed: Contact, Features, Footer components per request
 import Hero from "../components/home/hero";
 import NavBarHome from "../components/home/navbar-home";
 
@@ -18,9 +16,7 @@ const HomePage: React.FC<HomePageProps> = ({}) => {
 
       <NavBarHome loadingBarRef={loadingBarRef} />
       <Hero loadingBarRef={loadingBarRef} />
-      <Features />
-      <Contact />
-      <Footer />
+      {/* Features, Contact, Footer removed */}
     </>
   );
 };

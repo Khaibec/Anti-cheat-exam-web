@@ -9,6 +9,7 @@ import { getAssignedExams } from "../../helpers/api/exam-api";
 import { useAppDispatch } from "../../hooks";
 import { AssignedExam } from "../../models/exam-models";
 import { examActions } from "../../store/exam-store";
+import { getDashboardPath, isAdmin } from "../../helpers/auth/roles";
 
 interface DashboardPageProps {
   exams: AssignedExam[];
@@ -50,6 +51,15 @@ const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       redirect: {
         destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+
+  if (isAdmin(session.user.role)) {
+    return {
+      redirect: {
+        destination: getDashboardPath("admin"),
         permanent: false,
       },
     };

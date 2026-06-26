@@ -3,39 +3,44 @@ import {
   Card,
   CardActions,
   CardContent,
+  Chip,
   Divider,
-  Grid,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Stack,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
 import { AssignedExam } from "../../models/exam-models";
 import classes from "./exam-card.module.scss";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import TimelapseIcon from "@mui/icons-material/Timelapse";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import moment, { monthsShort } from "moment";
-import { Stack } from "@mui/system";
+import ReplayIcon from "@mui/icons-material/Replay";
+import moment from "moment";
 import { LoadingBarRef } from "react-top-loading-bar";
-
-// TODO: Disable button for past or future exam
 
 interface ExamCardProps {
   exam: AssignedExam;
   loadingBarRef: React.RefObject<LoadingBarRef>;
 }
 
-const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
-  const startDate = new Date(exam.startDate);
-  const endDate = new Date(exam.endDate);
+const statusColor = {
+  pending: "default",
+  submitted: "warning",
+  graded: "success",
+  completed: "success",
+} as const;
 
-  const startDateFormatted = moment(startDate).format("lll");
-  const endDateFormatted = moment(endDate).format("lll");
-  const duration = moment.duration(exam.duration, "seconds").as("minutes");
+const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
+  const startDateFormatted = moment(exam.startDate).format("lll");
+  const endDateFormatted = moment(exam.endDate).format("lll");
+  const hasResults = (exam.attemptsUsed ?? 0) > 0;
+  const canStart = (exam.attemptsRemaining ?? exam.maxAttempts ?? 1) > 0;
+  const maxAttempts = exam.maxAttempts ?? 1;
+  const attemptsRemaining = exam.attemptsRemaining ?? maxAttempts;
 
   return (
     <div>
@@ -46,7 +51,7 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
         }}
       >
         <CardContent>
-          <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography
               sx={{ fontSize: 14, marginBottom: "12px" }}
               color="text.secondary"
@@ -55,14 +60,30 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
               {exam?.name}
             </Typography>
 
-            <Typography
-              sx={{ fontSize: 14, marginBottom: "12px" }}
-              color="text.secondary"
-              gutterBottom
-            >
-              ID: {exam?._id}
-            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip
+                size="small"
+                label={exam.status}
+                color={statusColor[exam.status] || "default"}
+              />
+              {hasResults && exam.gradeOutOf10 !== undefined && (
+                <Chip
+                  size="small"
+                  label={`${exam.gradeOutOf10}/10`}
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
+            </Stack>
           </Stack>
+
+          <Typography
+            sx={{ fontSize: 14, marginBottom: "12px" }}
+            color="text.secondary"
+            gutterBottom
+          >
+            ID: {exam?._id}
+          </Typography>
 
           <Divider />
 
@@ -71,15 +92,9 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
               <ListItemIcon>
                 <DateRangeIcon />
               </ListItemIcon>
-              <ListItemText
-                primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }}
-              >
-                <span className={classes.examDateSpan}>
-                  {startDateFormatted}
-                </span>
-                <span className={classes.examDateSpan}>
-                  {/* <ArrowForwardIcon /> */}→
-                </span>
+              <ListItemText primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }}>
+                <span className={classes.examDateSpan}>{startDateFormatted}</span>
+                <span className={classes.examDateSpan}>→</span>
                 <span className={classes.examDateSpan}>{endDateFormatted}</span>
               </ListItemText>
             </ListItem>
@@ -89,7 +104,7 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
                 <TimelapseIcon />
               </ListItemIcon>
               <ListItemText
-                primary={`${duration} Minutes`}
+                primary={`${exam.duration} Minutes`}
                 primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }}
               />
             </ListItem>
@@ -103,27 +118,50 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, loadingBarRef }) => {
                 primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }}
               />
             </ListItem>
+
+            <ListItem>
+              <ListItemIcon>
+                <ReplayIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={`${attemptsRemaining} of ${maxAttempts} attempt(s) remaining`}
+                secondary={
+                  hasResults
+                    ? `Used ${exam.attemptsUsed} time(s)`
+                    : "Not attempted yet"
+                }
+                primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }}
+              />
+            </ListItem>
           </List>
         </CardContent>
-        <CardActions>
-          <Link href={`/exam/${exam._id}`}>
-            <Button
-              size="small"
-              variant="contained"
-              color="primary"
-              sx={{
-                ml: 2,
-                mb: 1,
-              }}
-              onClick={() => {
-                console.log("LOL");
-
-                loadingBarRef.current.continuousStart(50);
-              }}
-            >
-              Start Exam
-            </Button>
-          </Link>
+        <CardActions sx={{ flexWrap: "wrap", gap: 1 }}>
+          {canStart && (
+            <Link href={`/exam/${exam._id}`}>
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                sx={{ ml: 2, mb: 1 }}
+                onClick={() => loadingBarRef.current.continuousStart(50)}
+              >
+                {hasResults ? "Retake Exam" : "Start Exam"}
+              </Button>
+            </Link>
+          )}
+          {hasResults && (
+            <Link href={`/exam/result/${exam._id}`}>
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                sx={{ ml: canStart ? 0 : 2, mb: 1 }}
+                onClick={() => loadingBarRef.current.continuousStart(50)}
+              >
+                View Results
+              </Button>
+            </Link>
+          )}
         </CardActions>
       </Card>
     </div>

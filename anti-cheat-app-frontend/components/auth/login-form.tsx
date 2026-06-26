@@ -5,7 +5,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import classes from "./login-form.module.scss";
@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { Box, Container } from "@mui/system";
 import Image from "next/image";
 import { LoadingBarRef } from "react-top-loading-bar";
+import { getDashboardPath } from "../../helpers/auth/roles";
 
 interface LoginFormProps {
   loadingBarRef: React.RefObject<LoadingBarRef>;
@@ -22,8 +23,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ loadingBarRef }) => {
   const router = useRouter();
 
   const [formData, setData] = useState({
-    id: "1800760308",
-    password: "12345678",
+    id: "1234567890",
+    password: "password123",
   });
 
   const [errors, setErrors] = useState({
@@ -46,20 +47,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ loadingBarRef }) => {
     validateInputs(newData.id, newData.password);
   };
 
-  const validateInputs = (id: string, password: string) => {
-    const idRegex = /^\d{10}$/;
-    const passwordRegex = /^.{8,}$/;
+const validateInputs = (id: string, password: string): boolean => {
+  const isIdValid = id.trim().length > 0;
+  const isPasswordValid = password.length >= 8;
 
-    const isIdValid = idRegex.test(id);
-    const isPasswordValid = passwordRegex.test(password);
+  setErrors({
+    idError: isIdValid ? "" : "ID is required",
+    passwordError: isPasswordValid
+      ? ""
+      : "Password must be at least 8 characters long",
+  });
 
-    setErrors({
-      idError: isIdValid ? "" : "ID must be a 10 digit number",
-      passwordError: isPasswordValid
-        ? ""
-        : "Password must be atleast 8 character long",
-    });
-  };
+  return isIdValid && isPasswordValid;
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,7 +83,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ loadingBarRef }) => {
       }
 
       if (result.ok) {
-        router.replace("/dashboard");
+        const session = await getSession();
+        router.replace(getDashboardPath(session?.user?.role));
       }
     } catch (e) {
       // TODO: Fix login toast error message

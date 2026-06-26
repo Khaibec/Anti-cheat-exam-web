@@ -4,7 +4,9 @@ import { getSession, useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import AppBarExam from "../../components/exam/app-bar-exam";
 import ExamButtonsGroup from "../../components/exam/exam-buttons";
-import ExamCamera from "../../components/exam/exam-camera";
+import ExamCamera, {
+  ExamCameraHandle,
+} from "../../components/exam/exam-camera";
 import QuestionTracker from "../../components/exam/question-tracker";
 import QuestionWidget from "../../components/exam/question-widget";
 import { getExam } from "../../helpers/api/exam-api";
@@ -22,6 +24,7 @@ import WarningModal from "../../components/exam/exam-modals";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+import { getDashboardPath, isAdmin } from "../../helpers/auth/roles";
 
 const TESTING = false;
 
@@ -55,7 +58,9 @@ interface ExamPageProps {
 const ExamPage: React.FC<ExamPageProps> = ({ exam, error }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const session = useSession();
   const loadingBarRef: React.Ref<LoadingBarRef> = useRef(null);
+  const cameraRef = useRef<ExamCameraHandle>(null);
 
   const activeExam = useAppSelector((state) => state.exam.activeExam);
 
@@ -83,7 +88,7 @@ const ExamPage: React.FC<ExamPageProps> = ({ exam, error }) => {
     const beforeUnloadEventHandler = (event: BeforeUnloadEvent) => {
       event.preventDefault();
 
-      const warningMessage = "Are you sure you want to leave the exam?";
+      const warningMessage = "Bạn có chắc muốn rời khỏi kỳ thi không?";
 
       if (event) {
         event.returnValue = warningMessage; // Legacy method for cross browser support
@@ -111,6 +116,7 @@ const ExamPage: React.FC<ExamPageProps> = ({ exam, error }) => {
     const handleVisibilityChange = () => {
       if (document[hiddenProp]) {
         setDidLeaveExam(true);
+        cameraRef.current?.captureAndReport("tab_switch");
       } else {
         showModal(
           "WAARNING!",
@@ -155,22 +161,21 @@ const ExamPage: React.FC<ExamPageProps> = ({ exam, error }) => {
     dispatch(examActions.increaseTabChangeCount());
 
     if (activeExam.tabChangeCount > 3) {
-      toast("You've changed tab more than 3 times, submiting exam!");
-      // TODO: submit exam
+        toast("Bạn đã chuyển tab hơn 3 lần, bài thi sẽ được nộp tự động!");
+        // TODO: submit exam
+      }
+    };
+
+    if (error) {
+      return <p>Lỗi: {error}</p>;
     }
-  };
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+    if (!activeExam) {
+      return <p>Đang tải...</p>;
+    }
 
-  if (!activeExam) {
-    return <p>Loading...</p>;
-  }
-
-  if (activeExam.exam._id !== exam._id) {
-    return <p>Error!</p>;
-  }
+    if (activeExam.exam._id !== exam._id) {
+      return <p>Lỗi dữ liệu bài thi</p>;
 
   return (
     <React.Fragment>
@@ -220,7 +225,12 @@ const ExamPage: React.FC<ExamPageProps> = ({ exam, error }) => {
               <QuestionTracker />
             </Grid>
             <Grid item>
-              <ExamCamera />
+              <ExamCamera
+                ref={cameraRef}
+                studentId={session.data?.user?.id}
+                examId={exam._id}
+                token={session.data?.user?.token}
+              />
             </Grid>
           </Grid>
         </Grid>
@@ -252,6 +262,15 @@ const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  if (isAdmin(session.user.role)) {
+    return {
+      redirect: {
+        destination: getDashboardPath("admin"),
+        permanent: false,
+      },
+    };
+  }
+
   const { examId } = context.params;
 
   try {
@@ -272,6 +291,18 @@ const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } catch (e) {
+    if (
+      e.message?.includes("No attempts remaining") ||
+      e.message?.includes("already submitted")
+    ) {
+      return {
+        redirect: {
+          destination: `/exam/result/${examId}`,
+          permanent: false,
+        },
+      };
+    }
+
     return {
       props: {
         exam: null,

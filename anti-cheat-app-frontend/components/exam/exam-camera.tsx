@@ -1,131 +1,170 @@
 import { Camera } from "@mediapipe/camera_utils";
 import { FaceDetection, Results } from "@mediapipe/face_detection";
-import { Button } from "@mui/material";
-import NextImage from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import Webcam from "react-webcam";
 import {
-  b64toBlob,
   detectCheating,
   extractFaceCoordinates,
-  getCheatingStatus,
-  printLandmarks,
 } from "../../helpers/face-detection/face-detection-helper";
+import {
+  CheatingType,
+  getCheatingStatusLabel,
+  getCheatingTypeFromGaze,
+} from "../../helpers/cheating/cheating-types";
+import { useCheatingLogger } from "../../helpers/cheating/use-cheating-logger";
 import classes from "./exam-camera.module.scss";
 
-interface ExamCameraProps {}
+export interface ExamCameraHandle {
+  captureAndReport: (cheatingType: CheatingType) => Promise<void>;
+}
 
-const ExamCamera: React.FC<ExamCameraProps> = () => {
-  const [img_, setImg_] = useState<string>();
-  const webcamRef: React.LegacyRef<Webcam> = useRef();
-  const faceDetectionRef = useRef<FaceDetection>(null);
-  const realtimeDetection = true;
+interface ExamCameraProps {
+  studentId?: string;
+  examId?: string;
+  token?: string;
+}
 
-  const frameRefresh = 30;
-  let currentFrame = useRef(0);
+const ExamCamera = forwardRef<ExamCameraHandle, ExamCameraProps>(
+  ({ studentId, examId, token }, ref) => {
+    const webcamRef = useRef<Webcam>(null);
+    const faceDetectionRef = useRef<FaceDetection | null>(null);
+    const currentFrame = useRef(0);
 
-  const [chetingStatus, setChetingStatus] = useState("");
+    const [cheatingStatus, setCheatingStatus] = useState("Monitoring...");
+    const { reportCheating } = useCheatingLogger({ studentId, examId, token });
+    const reportCheatingRef = useRef(reportCheating);
 
-  useEffect(() => {
-    const faceDetection: FaceDetection = new FaceDetection({
-      locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+    useEffect(() => {
+      reportCheatingRef.current = reportCheating;
+    }, [reportCheating]);
+
+    const captureScreenshotBlob = useCallback(async (): Promise<Blob | null> => {
+      const screenshot = webcamRef.current?.getScreenshot();
+      if (!screenshot) return null;
+
+      const response = await fetch(screenshot);
+      return response.blob();
+    }, []);
+
+    const handleCheatingDetected = useCallback(
+      async (cheatingType: CheatingType) => {
+        setCheatingStatus(getCheatingStatusLabel(cheatingType));
+
+        const imageBlob = await captureScreenshotBlob();
+        await reportCheatingRef.current(cheatingType, imageBlob);
       },
-    });
+      [captureScreenshotBlob]
+    );
 
-    faceDetection.setOptions({
-      minDetectionConfidence: 0.5,
-      model: "short",
-    });
+    const handleCheatingDetectedRef = useRef(handleCheatingDetected);
 
-    function onResult(result: Results) {
-      // TODO: Fix multiple toasts
-      if (result.detections.length < 1) {
-        // toast(
-        //   "Face not detected, make sure your face is visible on the screen!"
-        // );
-        return;
-      } else if (result.detections.length > 1) {
-        // toast(
-        //   "Detected more than one person in frame, can be flagged as cheating!"
-        // );
-        return;
-      }
+    useEffect(() => {
+      handleCheatingDetectedRef.current = handleCheatingDetected;
+    }, [handleCheatingDetected]);
 
-      const faceCoordinates = extractFaceCoordinates(result);
-
-      // printLandmarks(result);
-
-      const [lookingLeft, lookingRight] = detectCheating(
-        faceCoordinates,
-        false
-      );
-
-      const cheatingStatus = getCheatingStatus(lookingLeft, lookingRight);
-      setChetingStatus(cheatingStatus);
-    }
-
-    faceDetection.onResults(onResult);
-    faceDetectionRef.current = faceDetection;
-
-    if (webcamRef.current) {
-      const camera = new Camera(webcamRef.current.video, {
-        onFrame: async () => {
-          // Proceed frames only if real time detection is on
-          if (!realtimeDetection) {
-            return;
-          }
-
-          currentFrame.current += 1;
-
-          if (currentFrame.current >= frameRefresh) {
-            currentFrame.current = 0;
-            await faceDetection.send({ image: webcamRef.current.video });
-          }
+    useImperativeHandle(
+      ref,
+      () => ({
+        captureAndReport: async (cheatingType: CheatingType) => {
+          await handleCheatingDetectedRef.current(cheatingType);
         },
-        width: 1280,
-        height: 720,
+      }),
+      []
+    );
+
+    useEffect(() => {
+      const faceDetection = new FaceDetection({
+        locateFile: (file) => {
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+        },
       });
 
-      camera.start();
-    }
+      faceDetection.setOptions({
+        minDetectionConfidence: 0.5,
+        model: "short",
+      });
 
-    return () => {
-      faceDetection.close();
-    };
-  }, [webcamRef, realtimeDetection]);
+      const onResult = async (result: Results) => {
+        if (result.detections.length < 1) {
+          setCheatingStatus(getCheatingStatusLabel("no_face_detected"));
+          await handleCheatingDetectedRef.current("no_face_detected");
+          return;
+        }
 
-  const onResultClick = async () => {
-    // const imgSrc = webcamRef.current.getScreenshot();
-    // const blob = await b64toBlob(imgSrc);
-    // const img = new Image(600, 400);
-    // const src = URL.createObjectURL(blob);
-    // img.src = src;
-    // setImg_(src);
+        if (result.detections.length > 1) {
+          setCheatingStatus(getCheatingStatusLabel("multiple_faces"));
+          await handleCheatingDetectedRef.current("multiple_faces");
+          return;
+        }
 
-    await faceDetectionRef?.current?.send({ image: webcamRef.current.video });
-  };
+        const faceCoordinates = extractFaceCoordinates(result);
+        const [lookingLeft, lookingRight] = detectCheating(faceCoordinates, false);
+        const cheatingType = getCheatingTypeFromGaze(lookingLeft, lookingRight);
 
-  return (
-    <div className={classes.cameraContainer}>
-      <p className={classes.cheatingStatus}>Cheating status: {chetingStatus}</p>
+        setCheatingStatus(getCheatingStatusLabel(cheatingType));
 
-      {true && (
+        if (cheatingType) {
+          await handleCheatingDetectedRef.current(cheatingType);
+        }
+      };
+
+      faceDetection.onResults(onResult);
+      faceDetectionRef.current = faceDetection;
+
+      let camera: Camera | null = null;
+
+      const startCamera = () => {
+        if (!webcamRef.current?.video) return;
+
+        camera = new Camera(webcamRef.current.video, {
+          onFrame: async () => {
+            if (!webcamRef.current?.video) return;
+
+            currentFrame.current += 1;
+
+            if (currentFrame.current >= 30) {
+              currentFrame.current = 0;
+              await faceDetection.send({ image: webcamRef.current.video });
+            }
+          },
+          width: 1280,
+          height: 720,
+        });
+
+        camera.start();
+      };
+
+      const timer = window.setTimeout(startCamera, 500);
+
+      return () => {
+        window.clearTimeout(timer);
+        camera?.stop();
+        faceDetection.close();
+      };
+    }, []);
+
+    return (
+      <div className={classes.cameraContainer}>
+        <p className={classes.cheatingStatus}>Cheating status: {cheatingStatus}</p>
+
         <Webcam
           className={classes.camera}
           ref={webcamRef}
           screenshotFormat="image/jpeg"
+          videoConstraints={{ facingMode: "user" }}
         />
-      )}
+      </div>
+    );
+  }
+);
 
-      <br />
-
-      {/* <Button onClick={onResultClick}>Get Result</Button> */}
-
-      {img_ && <NextImage src={img_} alt="Profile" />}
-    </div>
-  );
-};
+ExamCamera.displayName = "ExamCamera";
 
 export default ExamCamera;

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 import LoginForm from "../../components/auth/login-form";
 import NavBarHome from "../../components/home/navbar-home";
+import { getDashboardPath } from "../../helpers/auth/roles";
 
 const LoginPage = () => {
   const loadingBarRef: React.Ref<LoadingBarRef> = useRef(null);
@@ -34,7 +35,7 @@ const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     redirect: {
-      destination: "/dashboard",
+      destination: getDashboardPath(session.user.role),
       permanent: false,
     },
     props: {

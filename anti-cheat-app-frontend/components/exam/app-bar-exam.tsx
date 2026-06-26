@@ -30,14 +30,15 @@ const AppBarExam: React.FC<AppBarExamProps> = ({ examName, loadingBarRef }) => {
     loadingBarRef.current.continuousStart(50);
 
     try {
-      const result = await submitExam(
+      await submitExam(
         session.data?.user.id,
         activeExam.exam._id,
         activeExam.answerKeys,
+        activeExam.questionOrder,
         session.data?.user.token
       );
 
-      router.replace("/dashboard");
+      router.replace(`/exam/result/${activeExam.exam._id}`);
     } catch (e) {
       console.log(e);
       toast(e.message || "Failed to submit exam, please try again!");
