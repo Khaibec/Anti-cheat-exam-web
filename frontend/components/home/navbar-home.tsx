@@ -54,10 +54,6 @@ const ElevationScroll: React.FC<ElevationScrollProps> = ({
   return React.cloneElement(children, {
     elevation: trigger ? 4 : 0,
     color: trigger ? "default" : "transparent",
-    // sx: {
-    //   paddingTop: trigger ? "1rem" : "1rem",
-    //   paddingBottom: trigger ? "1rem" : "1rem",
-    // },
   });
 };
 
@@ -107,7 +103,7 @@ const NavBarHome: React.FC<NavBarHomeProps> = (props) => {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Anti-Cheat Exam App
+        ExamGuard
       </Typography>
       <Divider />
       <List>
@@ -165,7 +161,7 @@ const NavBarHome: React.FC<NavBarHomeProps> = (props) => {
                 component="div"
                 sx={{ flexGrow: 1, ml: 2 }}
               >
-                Anti-Cheat Exam App
+                ExamGuard
               </Typography>
 
               <Box sx={{ display: { xs: "none", sm: "block" } }}>

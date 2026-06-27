@@ -132,7 +132,7 @@ const validateInputs = (id: string, password: string): boolean => {
             </Avatar>
 
             <Typography component="h1" variant="h5" sx={{ mb: 5 }}>
-              Anti-Cheat Exam App
+              ExamGuard
             </Typography>
 
             <Box

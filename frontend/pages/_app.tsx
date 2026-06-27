@@ -21,8 +21,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <Head>
-            <title>Anti-Cheat Exam App</title>
-            <meta name="author" content="Prathamesh Mutkure" />
+            <title>ExamGuard</title>
+            <meta name="author" content="KhaiBec" />
           </Head>
           <Component {...pageProps} />
           <ToastContainer position="bottom-center" theme="light" />

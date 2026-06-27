@@ -33,7 +33,6 @@ const Hero: React.FC<HeroProps> = ({ loadingBarRef }) => {
 
               <p>
                 Detect cheating with AI-powered face detection and real-time monitoring.
-                Ensure exam integrity while maintaining student privacy.
               </p>
 
               <Stack direction="row" className={classes.buttonGroup}>

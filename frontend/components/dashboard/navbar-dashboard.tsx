@@ -54,7 +54,7 @@ const NavBarDashboard: React.FC<NavBarDashboardProps> = (props) => {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Anti-Cheat Exam App
+        ExamGuard
       </Typography>
       <Divider />
       <List>
@@ -98,7 +98,7 @@ const NavBarDashboard: React.FC<NavBarDashboardProps> = (props) => {
           </Link>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2 }}>
-            Anti-Cheat Exam App
+            ExamGuard
           </Typography>
 
           <Box sx={{ display: { xs: "none", sm: "block" } }}>

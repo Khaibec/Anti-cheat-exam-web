@@ -37,7 +37,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   return (
     <div>
       <Head>
-        <title>Admin Dashboard - Anti-Cheat Exam App</title>
+        <title>Admin Dashboard - ExamGuard</title>
       </Head>
       <LoadingBar color="#ffffff" ref={loadingBarRef} />
       <NavBarAdmin loadingBarRef={loadingBarRef} />
