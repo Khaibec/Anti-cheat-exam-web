@@ -176,12 +176,13 @@ const ExamPage: React.FC<ExamPageProps> = ({ exam, error }) => {
 
     if (activeExam.exam._id !== exam._id) {
       return <p>Lỗi dữ liệu bài thi</p>;
+    }
 
-  return (
-    <React.Fragment>
-      <Head>
-        <title>{exam.name}</title>
-      </Head>
+    return (
+      <React.Fragment>
+        <Head>
+          <title>{exam.name}</title>
+        </Head>
 
       <LoadingBar color="#ffffff" ref={loadingBarRef} />
 
@@ -314,3 +315,4 @@ const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default ExamPage;
 export { getServerSideProps };
+
