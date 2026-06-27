@@ -4,7 +4,7 @@
 
 ## Tính năng chính
 - Quản lý bài thi: tạo, chỉnh sửa, xóa đề và bài thi.
-- Sinh/thiết lập đề thi cho sinh viên.
+- Thiết lập/chỉnh sửa đề thi cho sinh viên.
 - Ghi lại và lưu trữ logs liên quan đến hành vi gian lận (thư mục `backend/uploads/cheating-logs/`).
 - Xác thực người dùng (roles: admin, student).
 - Giao diện admin và dashboard cho sinh viên.
@@ -42,7 +42,7 @@ npm install
 # node app.js
 ```
 
-2. Seed dữ liệu mẫu (nếu có)
+2. Seed dữ liệu mẫu 
 
 ```bash
 # Trong thư mục backend
@@ -77,20 +77,4 @@ Lưu ý: Các script chính xác (`dev`, `start`) phụ thuộc vào `package.js
 cd frontend
 npm test
 ```
-
-## Đóng góp
-- Fork repo, tạo branch cho tính năng/fix, mở pull request mô tả thay đổi.
-- Thêm mô tả cách chạy local nếu cần thay đổi môi trường hoặc seed.
-
-## Giấy phép
-- Mặc định: MIT (hoặc thay bằng giấy phép mong muốn).
-
----
-
-Nếu bạn muốn, mình có thể cập nhật README với:
-- Ví dụ chi tiết các biến môi trường trong `.env.example`.
-- Tài liệu API chi tiết (các endpoint, body request/response).
-- Hướng dẫn deploy (Docker / Vercel / Heroku).
-
----
 
