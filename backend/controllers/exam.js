@@ -69,6 +69,23 @@ exports.getAssignedExamList = (req, res) => {
 exports.getExam = (req, res) => {
   if (!req.exam) return handleError(res, "Cannot get Exam, DB Error!");
 
+  // Block access if exam not yet started or already expired
+  try {
+    const now = new Date();
+    const start = new Date(req.exam.startDate);
+    const end = new Date(req.exam.endDate);
+
+    if (now < start) {
+      return handleError(res, "Exam has not started yet.", 400);
+    }
+
+    if (now > end) {
+      return handleError(res, "Exam has expired.", 400);
+    }
+  } catch (e) {
+    // If date parsing fails, continue — existing logic will handle other errors
+  }
+
   const examId = req.exam._id;
   const summary = getAttemptSummary(
     req.student.submittedExams?.[examId],
