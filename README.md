@@ -1,4 +1,4 @@
-# Anti-Cheat Exam Web
+# ExamGuard
 
 Ứng dụng web quản lý và giám sát bài thi trực tuyến, gồm backend (Node.js/Express) và frontend (Next.js + TypeScript). Mục tiêu chính là cung cấp nền tảng tổ chức, nộp bài, và phát hiện hành vi gian lận (cheating) bằng cách ghi lại log và xử lý dữ liệu camera/face-detection ở phía client.
 
